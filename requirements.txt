@@ -1,6 +1,6 @@
 catboost
 joblib
-lightbgm
+lightgbm
 optuna
 streamlit
 xgboost
