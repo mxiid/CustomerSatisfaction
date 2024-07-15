@@ -90,3 +90,9 @@ class DataCleaning:
             Union[pd.DataFrame, pd.Series]: handles data
         """
         return self.strategy.handle_data(self.data)
+
+class Model(ABC):
+    """Abstract class for all models
+    """
+
+    
