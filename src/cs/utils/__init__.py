@@ -108,23 +108,23 @@ class Model(ABC):
         """
         pass
 
-    class LinearRegressionModel(Model):
-        
-        def train(self, X_train, y_train, **kwargs):
-            """Trains the model
+class LinearRegressionModel(Model):
+    
+    def train(self, X_train, y_train, **kwargs):
+        """Trains the model
 
-            Args:
-                X_train: training data
-                y_train: training labels
-            Returns:
-                None
-            """
+        Args:
+            X_train: training data
+            y_train: training labels
+        Returns:
+            None
+        """
 
-            try:
-                reg = LinearRegression(**kwargs)
-                reg.fit(X_train, y_train)
-                logger.info("Model trained successfully")
-                return reg 
-            except Exception as e:
-                logger.info(f"Error in training model: {e}")
-                raise e
+        try:
+            reg = LinearRegression(**kwargs)
+            reg.fit(X_train, y_train)
+            logger.info("Model trained successfully")
+            return reg 
+        except Exception as e:
+            logger.info(f"Error in training model: {e}")
+            raise e
