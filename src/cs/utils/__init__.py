@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
 
 class DataStrategy(ABC):
     """abstract class defining strategy for handling data
@@ -127,4 +128,82 @@ class LinearRegressionModel(Model):
             return reg 
         except Exception as e:
             logger.info(f"Error in training model: {e}")
+            raise e
+
+class Evaluation(ABC):
+    """class to evaluate model
+    """
+    @abstractmethod
+    def calculate_scores(self, y_true:np.ndarray, y_pred:np.ndarray):
+        """Calculates scores
+        Args: 
+            y_true: np.ndarray: true labels
+            y_pred: np.ndarray: predicted labels
+        Returns:
+            None
+        """
+        pass
+
+class MSE(Evaluation):
+    """class to calculate mean squared error
+    """
+
+    def calculate_scores(self, y_true: np.ndarray, y_pred: np.ndarray):
+        """Calculates scores
+        Args: 
+            y_true: np.ndarray: true labels
+            y_pred: np.ndarray: predicted labels
+        Returns:
+            None
+        """
+        try:
+            logging.info("Calculating MSE")
+            mse = mean_squared_error(y_true, y_pred)
+            logging.info(f"MSE: {mse}")
+            return mse
+        except Exception as e:
+            logger.info(f"Error in calculating scores: {e}")
+            raise e
+
+class R2(Evaluation):
+    """Calculates R2 score
+    """
+    
+    def calculate_scores(self, y_true: np.ndarray, y_pred: np.ndarray):
+        """Calculates scores
+        Args: 
+            y_true: np.ndarray: true labels
+            y_pred: np.ndarray: predicted labels
+        Returns:
+            None
+        """
+        try:
+            logging.info("Calculating R2 score")
+            r2 = r2_score(y_true, y_pred)
+            logging.info(f"R2 score: {r2}")
+            return r2
+        except Exception as e:
+            logger.info(f"Error in calculating scores: {e}")
+            raise e
+
+class RMSE(Evaluation):
+    """Calculates RMSE
+    """
+
+    def calculate_scores(self, y_true: np.ndarray, y_pred: np.ndarray):
+        """Calculates scores
+        Args: 
+            y_true: np.ndarray: true labels
+            y_pred: np.ndarray: predicted labels
+        Returns:
+            None
+        """
+        try:
+            logging.info("Calculating RMSE")
+            mse = mean_squared_error(y_true, y_pred)
+            rmse = np.sqrt(mse)
+            logging.info(f"RMSE: {rmse}")
+            return rmse
+        except Exception as e:
+            logger.info(f"Error in calculating scores: {e}")
             raise e
