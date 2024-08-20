@@ -31,7 +31,7 @@ def evaluate_model(model: RegressorMixin, X_test: pd.DataFrame, y_test: pd.DataF
         rmse_class = RMSE()
         rmse = rmse_class.calculate_scores(y_test, prediction)
 
-        return {"mse": mse, "r2": r2, "rmse": rmse}
+        return mse, r2, rmse
     except Exception as e:
         logger.info(f"Error in evaluating model: {e}")
         raise e

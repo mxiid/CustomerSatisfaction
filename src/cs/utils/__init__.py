@@ -1,4 +1,4 @@
-from cs import logger 
+from cs import logger
 from abc import ABC, abstractmethod
 from typing import Union
 
@@ -8,17 +8,17 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 
+
 class DataStrategy(ABC):
-    """abstract class defining strategy for handling data
-    """
+    """abstract class defining strategy for handling data"""
 
     @abstractmethod
     def handle_data(self, data: pd.DataFrame) -> Union[pd.DataFrame, pd.Series]:
         pass
 
+
 class DataPreprocessStrategy(DataStrategy):
-    """strategy for preprocessing data
-    """
+    """strategy for preprocessing data"""
 
     def handle_data(self, data: pd.DataFrame) -> pd.DataFrame:
         """preprocesses data
@@ -39,24 +39,33 @@ class DataPreprocessStrategy(DataStrategy):
                     "order_estimated_delivery_date",
                     "order_purchase_timestamp",
                 ],
-                axis=1)
-            data["product_weight_g"].fillna(data["product_weight_g"].median(), inplace=True)
-            data["product_length_cm"].fillna(data["product_length_cm"].median(), inplace=True)
-            data["product_height_cm"].fillna(data["product_height_cm"].median(), inplace=True)
-            data["product_width_cm"].fillna(data["product_width_cm"].median(), inplace=True)
+                axis=1,
+            )
+            data["product_weight_g"].fillna(
+                data["product_weight_g"].median(), inplace=True
+            )
+            data["product_length_cm"].fillna(
+                data["product_length_cm"].median(), inplace=True
+            )
+            data["product_height_cm"].fillna(
+                data["product_height_cm"].median(), inplace=True
+            )
+            data["product_width_cm"].fillna(
+                data["product_width_cm"].median(), inplace=True
+            )
             data["review_comment_message"].fillna("No review", inplace=True)
-            
-            data=data.select_dtypes(include=[np.number])
+
+            data = data.select_dtypes(include=[np.number])
             cols_to_drop = ["customer_zip_code_prefix", "order_item_id"]
             data = data.drop(cols_to_drop, axis=1)
             return data
         except Exception as e:
             logger.info(f"Error in preprocessing data: {e}")
-            raise e 
+            raise e
+
 
 class DataDivideStrategy(DataStrategy):
-    """strategy for dividing data into train and test
-    """
+    """strategy for dividing data into train and test"""
 
     def handle_data(self, data: pd.DataFrame) -> Union[pd.DataFrame, pd.Series]:
         """divides data into train and test
@@ -71,15 +80,17 @@ class DataDivideStrategy(DataStrategy):
         try:
             X = data.drop("review_score", axis=1)
             y = data["review_score"]
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+            X_train, X_test, y_train, y_test = train_test_split(
+                X, y, test_size=0.2, random_state=42
+            )
             return X_train, X_test, y_train, y_test
         except Exception as e:
             logger.info(f"Error in dividing data: {e}")
             raise e
 
+
 class DataCleaning:
-    """class to clean data and divides it into train and test
-    """
+    """class to clean data and divides it into train and test"""
 
     def __init__(self, data: pd.DataFrame, strategy: DataStrategy):
         self.data = data
@@ -93,9 +104,9 @@ class DataCleaning:
         """
         return self.strategy.handle_data(self.data)
 
+
 class Model(ABC):
-    """Abstract class for all models
-    """
+    """Abstract class for all models"""
 
     @abstractmethod
     def train(self, X_train, y_train):
@@ -109,8 +120,9 @@ class Model(ABC):
         """
         pass
 
+
 class LinearRegressionModel(Model):
-    
+
     def train(self, X_train, y_train, **kwargs):
         """Trains the model
 
@@ -125,18 +137,19 @@ class LinearRegressionModel(Model):
             reg = LinearRegression(**kwargs)
             reg.fit(X_train, y_train)
             logger.info("Model trained successfully")
-            return reg 
+            return reg
         except Exception as e:
             logger.info(f"Error in training model: {e}")
             raise e
 
+
 class Evaluation(ABC):
-    """class to evaluate model
-    """
+    """class to evaluate model"""
+
     @abstractmethod
-    def calculate_scores(self, y_true:np.ndarray, y_pred:np.ndarray):
+    def calculate_scores(self, y_true: np.ndarray, y_pred: np.ndarray):
         """Calculates scores
-        Args: 
+        Args:
             y_true: np.ndarray: true labels
             y_pred: np.ndarray: predicted labels
         Returns:
@@ -144,65 +157,65 @@ class Evaluation(ABC):
         """
         pass
 
+
 class MSE(Evaluation):
-    """class to calculate mean squared error
-    """
+    """class to calculate mean squared error"""
 
     def calculate_scores(self, y_true: np.ndarray, y_pred: np.ndarray):
         """Calculates scores
-        Args: 
+        Args:
             y_true: np.ndarray: true labels
             y_pred: np.ndarray: predicted labels
-        Returns:
+        Returns:mo
             None
         """
         try:
-            logging.info("Calculating MSE")
+            logger.info("Calculating MSE")
             mse = mean_squared_error(y_true, y_pred)
-            logging.info(f"MSE: {mse}")
+            logger.info(f"MSE: {mse}")
             return mse
         except Exception as e:
             logger.info(f"Error in calculating scores: {e}")
             raise e
 
+
 class R2(Evaluation):
-    """Calculates R2 score
-    """
-    
+    """Calculates R2 score"""
+
     def calculate_scores(self, y_true: np.ndarray, y_pred: np.ndarray):
         """Calculates scores
-        Args: 
+        Args:
             y_true: np.ndarray: true labels
             y_pred: np.ndarray: predicted labels
         Returns:
             None
         """
         try:
-            logging.info("Calculating R2 score")
+            logger.info("Calculating R2 score")
             r2 = r2_score(y_true, y_pred)
-            logging.info(f"R2 score: {r2}")
+            logger.info(f"R2 score: {r2}")
             return r2
         except Exception as e:
             logger.info(f"Error in calculating scores: {e}")
             raise e
 
+
 class RMSE(Evaluation):
-    """Calculates RMSE
-    """
+    """Calculates RMSE"""
 
     def calculate_scores(self, y_true: np.ndarray, y_pred: np.ndarray):
         """Calculates scores
-        Args: 
+        Args:
             y_true: np.ndarray: true labels
             y_pred: np.ndarray: predicted labels
         Returns:
             None
         """
         try:
-            logging.info("Calculating RMSE")
+            logger.info("Calculating RMSE")
             mse = mean_squared_error(y_true, y_pred)
             rmse = np.sqrt(mse)
-            logging.info(f"RMSE: {rmse}")
+            logger.info(f"RMSE: {rmse}")
             return rmse
         except Exception as e:
             logger.info(f"Error in calculating scores: {e}")

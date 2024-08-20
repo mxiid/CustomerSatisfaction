@@ -27,6 +27,7 @@ def clean_data(df: pd.DataFrame) -> Tuple[
         divide_strategy = DataDivideStrategy()
         data_cleaning = DataCleaning(processed_data, divide_strategy)
         X_train, X_test, y_train, y_test = data_cleaning.handle_data()
+        logger.info("Data cleaning completed")
         return X_train, X_test, y_train, y_test
     except Exception as e:
         logger.info (f"Error in cleaning data: {e}")

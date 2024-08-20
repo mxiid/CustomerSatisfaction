@@ -4,7 +4,7 @@ from zenml import step
 
 from cs.utils import LinearRegressionModel
 from sklearn.base import RegressorMixin
-from config import ModelNameConfig
+from cs.config import ModelNameConfig
 
 @step
 def train_model(
